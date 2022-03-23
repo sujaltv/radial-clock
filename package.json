@@ -1,0 +1,36 @@
+{
+  "name": "radial-clock",
+  "version": "1.0.7",
+  "description": "A lightweight JavaScript web component to create radial clocks.",
+  "scripts": {
+    "docs": "jsdoc -c jsdoc.json",
+    "serve": "webpack serve",
+    "build": "webpack --config webpack.config.js",
+    "prepack": "npm run build",
+    "prepublish": "npm pack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sujaltv/radial-clock.git"
+  },
+  "keywords": [
+    "d3js",
+    "d3"
+  ],
+  "author": "Sujal",
+  "devDependencies": {
+    "@babel/runtime": "^7.17.8",
+    "better-docs": "^2.7.2",
+    "jsdoc": "^3.6.10",
+    "remove-files-webpack-plugin": "^1.5.0",
+    "uglify-js": "^3.15.3",
+    "webpack": "^5.70.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-merge-and-include-globally": "^2.3.4"
+  },
+  "private": false,
+  "bugs": {
+    "url": "https://github.com/sujaltv/radial-clock/issues"
+  },
+  "licence": "BSD-3-Clause"
+}

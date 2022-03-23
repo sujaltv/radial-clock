@@ -1,0 +1,8 @@
+.DS_Store
+node_modules
+dist
+docs/**
+
+!docs/assets
+!docs/assets/**
+**.tgz

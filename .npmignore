@@ -1,0 +1,9 @@
+.github
+node_modules
+
+src
+.gitignore
+docs
+jsdoc.json
+webpack.config.js
+example
