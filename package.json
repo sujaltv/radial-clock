@@ -1,0 +1,42 @@
+{
+  "name": "radial-clock",
+  "version": "1.0.0",
+  "description": "A lightweight JavaScript web component to create radial clocks.",
+  "main": "src/index.js",
+  "scripts": {
+    "prebuild-old": "mkdir -p build",
+    "minify-js": "uglifyjs --compress --output ./build/radial-clock.min.js -b max_line_len=80 src/**.js",
+    "minify-css": "css-minify -d src -o build",
+    "build-old": "npm run minify-js && npm run minify-css",
+    "build-none": "babel src -d src",
+    "build": "webpack --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sujaltv/radial-clock.git"
+  },
+  "keywords": [
+    "d3js",
+    "d3"
+  ],
+  "author": "Sujal",
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.8",
+    "@babel/preset-env": "^7.16.11",
+    "babel-loader": "^8.2.4",
+    "babel-plugin-uglify": "^1.0.2",
+    "babel-preset-minify": "^0.5.1",
+    "css-minify": "^2.0.0",
+    "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
+    "jsdoc": "^3.6.10",
+    "uglify-js": "^3.15.3",
+    "webpack": "^5.70.0",
+    "webpack-cli": "^4.9.2"
+  },
+  "bugs": {
+    "url": "https://github.com/sujaltv/radial-clock/issues"
+  },
+  "licence": "BSD-3-Clause"
+}

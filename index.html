@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Conferences</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./src/radial-clock.css">
+  </head>
+  <body>
+    <div id="tooltip">
+      <span class="close" onclick="hideTooltip()">x</span>
+      <span class="title"></span>
+      <span class="year"></span>
+      <a class="full-name" target="_blank"></a>
+    </div>
+
+    <svg id="root"></svg>
+
+    <button class="export-btn" onclick="exporter()">
+      Export (buggy) (<code>.svg</code>)
+    </button>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="./src/needle.js"></script>
+    <script src="./src/utils.js"></script>
+    <script src="./src/radial-axis.js"></script>
+    <script src="./src/radial-clock.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

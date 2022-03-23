@@ -1,0 +1,16 @@
+html {
+  max-width: 640px;
+  margin: auto;
+}
+
+.export-btn {
+  outline: none;
+  padding: 5px;
+  border-radius: 3pt;
+  border: 1px solid #00888888;
+  background: #00888833;
+  font-size: 10pt;
+  color: #005555;
+  font-weight: bold;
+  cursor: pointer;
+}
