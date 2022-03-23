@@ -1,0 +1,18 @@
+{
+  "source": {
+    "include": [
+      "src/needle.js",
+      "src/radial-axis.js",
+      "src/radial-clock.js"
+    ]
+  },
+  "opts": {
+    "destination": "./docs",
+    "template": "node_modules/better-docs"
+  },
+  "templates": {
+    "default": {
+      "outputSourceFiles": false
+    }
+  }
+}

@@ -1,9 +1,21 @@
+/**
+ * This class creates a radial clock.
+ */
 class RadialClock {
+  /**
+   * Create a radial clock.
+   * @param {object} options Clock options
+   */
   constructor(options={}) {
     this.canvas = d3.create('svg:g');
     this.options = {...defaultClockOptions, ...options};
   }
 
+  /**
+   * Creates an appendable DOM element for the clock.
+   * @param {Array} events A list of events.
+   * @returns A DOM element that can be appended to the <code>svg</code> tag.
+   */
   getClockNode(events=[]) {
     const innerShellRadius = 50;
     const tierHeight = this.options.maxWidth / this.options.hierarchies;
@@ -65,7 +77,7 @@ class RadialClock {
 
       demarcationGroup
         .selectAll('g')
-        .data(RadialAxis.months.map((month, idx) => ({month, idx})))
+        .data(RadialAxis.ticks.map((month, idx) => ({month, idx})))
         .enter()
         .append('path')
         .attr('d', tick)

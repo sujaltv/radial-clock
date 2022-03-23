@@ -1,6 +1,13 @@
 .github
-modules
+node_modules
 
+src
+.gitignore
 app.js
+docs
 index.html
 styles.css
+jsdoc.json
+publish_example.sh
+webpack.config.js
+temp

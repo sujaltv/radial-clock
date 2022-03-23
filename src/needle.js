@@ -1,4 +1,15 @@
+/**
+ * This class creates a pivot, a shaft, and an arrowhead, together forming the
+ * hand.
+ */
+
 class Needle {
+  /**
+   * This method returns a <code>g</code> tag.
+   * @param {int} length The length of the needle.
+   * @param {string} colour The colour of the needle.
+   * @returns A D3 element.
+   */
   static getNeedle(length, colour='orange') {
     const pivot = d3.arc()
       .innerRadius(0)

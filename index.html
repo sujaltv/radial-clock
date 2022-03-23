@@ -3,7 +3,7 @@
   <head>
     <title>Conferences</title>
     <link rel="stylesheet" href="./styles.css">
-    <link rel="stylesheet" href="./src/radial-clock.css">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/radial-clock@1.0.0/dist/radial-clock.min.css">
   </head>
   <body>
     <div id="tooltip">
@@ -14,16 +14,10 @@
     </div>
 
     <svg id="root"></svg>
-
-    <button class="export-btn" onclick="exporter()">
-      Export (buggy) (<code>.svg</code>)
-    </button>
+    <svg id="root2"></svg>
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="./src/needle.js"></script>
-    <script src="./src/utils.js"></script>
-    <script src="./src/radial-axis.js"></script>
-    <script src="./src/radial-clock.js"></script>
+    <script src="https://unpkg.com/radial-clock@1.0.0/dist/radial-clock.min.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

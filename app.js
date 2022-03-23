@@ -1,7 +1,4 @@
-const width = 600;
-const height = 600;
-
-const data = [
+const cv_data = [
   {
     "title": "CVPR",
     "fullName": "Computer Vision and Pattern Recognition",
@@ -74,7 +71,7 @@ const data = [
   },
   {
     "title": "WACV",
-    "fullName": "International Conference on Pattern Recognition",
+    "fullName": "Winter Conference on Applications of Computer Vision",
     "range": {
       "from": "4 January 2022",
       "to": "8 January 2022"
@@ -82,6 +79,16 @@ const data = [
     "tier": 2,
     "url": "https://wacv2022.thecvf.com/home"
   },
+  {
+    "title": "IJCV",
+    "fullName": "International Journal of Computer Vision",
+    "date": "29 April 2022",
+    "tier": 0,
+    "url": "https://www.springer.com/journal/11263"
+  }
+];
+
+const robot_data = [
   {
     "title": "IROS",
     "fullName": "International Conference on Intelligent Robots and Systems",
@@ -111,20 +118,14 @@ const data = [
     },
     "tier": 3,
     "url": "http://case2022.org"
-  },
-  {
-    "title": "IJCV",
-    "fullName": "International Journal of Computer Vision",
-    "date": "29 April 2022",
-    "tier": 0,
-    "url": "https://www.springer.com/journal/11263"
   }
 ];
 
+const width = 600;
+const height = 600;
+
 const defaultClockOptions = {
   showInnerAxis: true,
-  innerAxisSuperscript: 'CV Lab'.toUpperCase(),
-  innerAxisSubscript: '2022'.toUpperCase(),
 
   showOuterAxis: true,
   showClockHand: true,
@@ -138,12 +139,6 @@ const defaultClockOptions = {
 
   tooltipCallback: null
 };
-
-const canvas = d3.select('svg')
-  .style('width', `${width}px`)
-  .style('height', `${height}px`)
-  .style('font', '10px sans-serif')
-  .attr('viewBox', `${-width/2} ${-height/2} ${width} ${width}`);
 
 const tooltipElement = document.getElementById('tooltip');
 tooltipElement.onmouseleave = hideTooltip;
@@ -171,10 +166,9 @@ function tooltipEnterCallback(element) {
     anchor.href = '';
   }
 
-
   tooltipElement.style.display = 'block';
-  tooltipElement.style.left = `${d3.event.pageX}px`;
-  tooltipElement.style.top = `${d3.event.pageY}px`;
+  tooltipElement.style.left = `${d3.event.pageX+10}px`;
+  tooltipElement.style.top = `${d3.event.pageY+10}px`;
 }
 
 function tooltipLeaveCallback() {
@@ -188,8 +182,29 @@ const myClockOptions = {
   tooltipLeaveCallback
 };
 
-const clock = new RadialClock(myClockOptions);
-canvas.append(_ => clock.getClockNode(data));
+const cv_conferences = d3.select('svg#root')
+  .style('width', `${width}px`)
+  .style('height', `${height}px`)
+  .style('font', '10px sans-serif')
+  .attr('viewBox', `${-width/2} ${-height/2} ${width} ${width}`);
+const clock = new RadialClock({
+  ...myClockOptions,
+  innerAxisSuperscript: 'Vision'.toUpperCase(),
+  innerAxisSubscript: '2022'.toUpperCase(),
+});
+cv_conferences.append(_ => clock.getClockNode(cv_data));
+
+const robot_conferences = d3.select('svg#root2')
+  .style('width', `${width}px`)
+  .style('height', `${height}px`)
+  .style('font', '10px sans-serif')
+  .attr('viewBox', `${-width/2} ${-height/2} ${width} ${width}`);
+const clock2 = new RadialClock({
+  ...myClockOptions,
+  innerAxisSuperscript: 'Robotics'.toUpperCase(),
+  innerAxisSubscript: '2022'.toUpperCase(),
+});
+robot_conferences.append(_ => clock2.getClockNode(robot_data));
 
 function exporter() {
   const canvas2 = d3.select('svg');
