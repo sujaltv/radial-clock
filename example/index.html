@@ -4,18 +4,12 @@
     <title>Conferences</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles.css">
-
-    <!-- <link rel="stylesheet" href="https://unpkg.com/radial-clock@1.0.0/dist/radial-clock.min.css"> -->
-    <!-- <link rel="stylesheet" href="../dist/radial-clock.min.css"> -->
-    <link rel="stylesheet" href="../src/radial-clock.css">
-
   </head>
   <body>
     <section class="container centre">
       <div id="clocks" class="clocks-grid"></div>
 
       <div id="tooltip">
-        <span class="close" onclick="hideTooltip()">x</span>
         <span class="title"></span>
         <span class="year"></span>
         <a class="full-name" target="_blank"></a>
@@ -27,14 +21,16 @@
       </footer>
     </section>
     <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://public-facing-items.s3.amazonaws.com/conferences.js"></script>
 
-    <!-- <script src="https://unpkg.com/radial-clock@1.0.0/dist/radial-clock.min.js"></script> -->
+    <script src="https://unpkg.com/radial-clock@1.0.1/dist/radial-clock.min.js"></script>
+
     <!-- <script src="../dist/radial-clock.min.js"></script> -->
 
-    <script src="../src/utils.js"></script>
+    <!-- <script src="../src/utils.js"></script>
     <script src="../src/needle.js"></script>
     <script src="../src/radial-axis.js"></script>
-    <script src="../src/radial-clock.js"></script>
+    <script src="../src/radial-clock.js"></script> -->
 
     <script src="./app.js"></script>
   </body>
