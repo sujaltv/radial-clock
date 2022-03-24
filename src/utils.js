@@ -20,4 +20,12 @@ class Utils {
 
     return monthAngle + dayAngle;
   }
+
+  static svgToString(svgElement) {
+    const serialiser = new XMLSerializer();
+    let source = '<?xml version="1.0" standalone="no"?>\r';
+    source += serialiser.serializeToString(svgElement);
+    source = 'data:image/svg+xml;charset=utf-8,' + source;
+    return source;
+  }
 }

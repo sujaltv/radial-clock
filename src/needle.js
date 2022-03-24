@@ -7,10 +7,11 @@ class Needle {
   /**
    * This method returns a <code>g</code> tag.
    * @param {int} length The length of the needle.
-   * @param {string} colour The colour of the needle.
+   * @param {string} colour The colour of the needle (a hex string, the name of
+      the colour, or the rgba function called).
    * @returns A D3 element.
    */
-  static getNeedle(length, colour='orange') {
+  static getNeedle(length, colour='#2196f3') {
     const pivot = d3.arc()
       .innerRadius(0)
       .outerRadius(2)
