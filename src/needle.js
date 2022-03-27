@@ -18,7 +18,7 @@ class Needle {
       .startAngle(0)
       .endAngle(Utils.degToRad(360));
 
-    const shaft = d3.line(0, 0)([[0,0], [0,-1]]);
+    const shaft = d3.line()([[0,0], [0,-1]]);
 
     const arrowHead = d3.path();
     arrowHead.moveTo(0, -1)
@@ -34,13 +34,13 @@ class Needle {
       .call(element => {
         element.append('path')
           .attr('d', arrowHead)
-          .attr('transform', `translate(0 -${length-4}) scale(6)`)
+          .attr('transform', `translate(0 -${length-4}) scale(5)`)
           .attr('fill', colour);
 
         element
           .append('path')
           .attr('d', shaft)
-          .attr('transform', `scale(0.6 ${length})`)
+          .attr('transform', `scale(0.4 ${length})`)
           .attr('stroke', colour)
           .attr('stroke-width', '2px');
 
@@ -48,7 +48,7 @@ class Needle {
           .attr('d', pivot)
           .attr('stroke', colour)
           .attr('fill', colour)
-          .attr('transform', `scale(0.55)`)
+          .attr('transform', `scale(0.4)`)
           .attr('stroke-width', '2px');
       });
 
