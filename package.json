@@ -1,7 +1,8 @@
 {
   "name": "radial-clock",
-  "version": "1.0.7",
-  "description": "A lightweight JavaScript web component to create radial clocks.",
+  "version": "1.0.8",
+  "description": "A lightweight JavaScript component to create radial clocks.",
+  "homepage": "radial-clock.surge.sh",
   "scripts": {
     "docs": "jsdoc -c jsdoc.json",
     "serve": "webpack serve",
@@ -22,6 +23,7 @@
     "@babel/runtime": "^7.17.8",
     "better-docs": "^2.7.2",
     "jsdoc": "^3.6.10",
+    "pug": ">=3.0.2",
     "remove-files-webpack-plugin": "^1.5.0",
     "uglify-js": "^3.15.3",
     "webpack": "^5.70.0",

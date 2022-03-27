@@ -23,11 +23,11 @@ class RadialAxis {
       .endAngle(d => Utils.degToRad((360 / 12) * (d.idx + 1)));
   }
 
-  getMonthAxis(fullLabels=false, x=5, dy=10, fontSize=5) {
+  getMonthAxis(ticks, fullLabels=false, x=5, dy=10, fontSize=5) {
     this.root = d3.create('svg:g');
 
     this.root.selectAll('g')
-      .data(RadialAxis.ticks.map((month, idx) => ({month, idx})))
+      .data(ticks.map((month, idx) => ({month, idx})))
       .enter()
         .append('g')
           .call(element => {
@@ -43,7 +43,7 @@ class RadialAxis {
               .attr('x', x)
               .attr('dy', dy)
                 .append('textPath')
-                .attr('xlink:href', d =>
+                .attr('href', d =>
                   `#monthAxisTick_${randId}_${this.uid}_${d.idx}`)
                 .text(d => {
                   let monthName = d.month.toUpperCase();

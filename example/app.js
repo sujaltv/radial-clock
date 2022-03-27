@@ -1,3 +1,18 @@
+class Browser {
+  static isFirefox() {
+    return navigator.userAgent.includes('Firefox');
+  }
+
+  static isChrome() {
+    return navigator.userAgent.includes('Chrome');
+  }
+
+  static isSafari() {
+    return navigator.userAgent.includes('Safari') &&
+      !Browser.isChrome() && !Browser.isFirefox();
+  }
+}
+
 function dateToEasyFormat(date) {
   const days = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
@@ -14,27 +29,6 @@ function dateToEasyFormat(date) {
     ${months[d.getMonth()].substring(0,3)} ${d.getFullYear()}`;
 }
 
-const defaultClockOptions = {
-  showInnerAxis: true,
-  innerAxisRadius: 35,
-
-  showOuterAxis: true,
-  showClockHand: true,
-
-  showHierarchyLevels: true,
-  showEvents: true,
-  hierarchies: 5,
-  tierHeight: 10,
-  overlayPast: true,
-
-  demarkMonths: true,
-
-  tooltipCallback: null
-};
-
-function hideTooltip() {
-  this.style.display = 'none';
-}
 
 function getTooltipcallback(tooltipElement) {
   const titleElement = tooltipElement.getElementsByClassName('title')[0];
@@ -79,10 +73,6 @@ function getTooltipcallback(tooltipElement) {
   return tooltipEnterCallback;
 }
 
-const myClockOptions = {
-  ...defaultClockOptions
-};
-
 function saveContent(content, fileName) {
   const downloader = document.createElement('a');
   downloader.href = content;
@@ -116,7 +106,7 @@ function getTooltip() {
   hIndex.setAttribute('class', 'h-index');
   tt.appendChild(hIndex);
 
-  tt.onmouseleave = hideTooltip;
+  tt.onmouseleave = e => e.target.style.display = 'none';
 
   return tt;
 }
@@ -133,6 +123,7 @@ function addClockWindow(data, container) {
   const tooltipEnterCallback = getTooltipcallback(tooltip);
 
   const divisionCanvas = d3.create('svg')
+    .attr('xmlns', "https://www.w3.org/2000/svg")
     .style('width', `100%`)
     .style('height', `100%`)
     .style('font', '10px sans-serif')
@@ -142,11 +133,12 @@ function addClockWindow(data, container) {
   const today = new Date();
 
   const clock = new RadialClock({
-    ...myClockOptions,
+    ...defaultClockOptions,
     showInnerAxis: true,
     showHierarchyLevels: true,
     showOuterAxis: true,
-    showClockHand: (Number(data.year) || 2022) == today.getFullYear(),
+    showMajorAxisHand: (Number(data.year) || 2022) == today.getFullYear(),
+    showMinorAxisHand: false,
     overlayPast: (Number(data.year) || 2022) == today.getFullYear(),
     demarkMonths: !false,
     showEvents: !false,
@@ -166,13 +158,25 @@ function addClockWindow(data, container) {
   const buttonsPane = document.createElement('div');
   buttonsPane.setAttribute('class', 'buttons-pane');
 
-  const svgExport = document.createElement('button');
-  svgExport.innerHTML = 'Export <code>(.svg)</code>';
-  svgExport.onclick = () => {
-    const svgAsString = Utils.svgToString(divisionCanvas.node());
-    saveContent(svgAsString, data.category.replace(' ', '_') + '.svg');
+  if (!Browser.isSafari()) {
+    const svgExport = document.createElement('button');
+    svgExport.innerHTML = 'Export <code>(.svg)</code>';
+    svgExport.onclick = async () => {
+      const svgAsString = await Utils.svgToString(divisionCanvas.node());
+      saveContent(svgAsString, data.category.replace(' ', '_') + '.svg');
+    }
+    buttonsPane.appendChild(svgExport);
   }
-  buttonsPane.appendChild(svgExport);
+
+  if (Browser.isChrome()) {
+    const svgExportPNG = document.createElement('button');
+    svgExportPNG.innerHTML = 'Export <code>(.png)</code>';
+    svgExportPNG.onclick = async () => {
+      const svgAsPNG = await Utils.svgToPng(divisionCanvas.node(), 4);
+      saveContent(svgAsPNG, data.category.replace(' ', '_') + '.png');
+    }
+    buttonsPane.appendChild(svgExportPNG);
+  }
 
   divisionContainer.appendChild(buttonsPane);
 }

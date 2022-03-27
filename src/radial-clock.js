@@ -1,3 +1,38 @@
+const defaultClockOptions = {
+  showInnerAxis: true,
+  innerAxisRadius: 35,
+  innerAxisSuperscript: 'Radial Clock',
+  innerAxisSubscript: 'TVS',
+
+  showOuterAxis: true,
+
+  showMajorAxisHand: true,
+  maxjorAxisTicks: [
+    'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December'
+  ],
+
+  showMinorAxisHand: true,
+  minorAxisTicks: [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28, 29, 30, 31
+  ],
+
+  hierarchies: 5,
+  showHierarchyLevels: true,
+  tierHeight: 10,
+
+  showEvents: true,
+  showEventLabels: true,
+
+  overlayPast: true,
+
+  demarkMonths: true,
+
+  tooltipCallback: null,
+};
+
+
 /**
  * This class creates a radial clock.
  */
@@ -20,7 +55,7 @@ class RadialClock {
     if (this.options.showInnerAxis) {
       const scale = new RadialAxis(this.options.innerAxisRadius - 4,
         this.options.innerAxisRadius - 2);
-      scale.getMonthAxis(false, 5, 8, 3);
+      scale.getMonthAxis(this.options.maxjorAxisTicks, false, 5, 8, 3);
 
       if (this.options.innerAxisSuperscript.length > 0) {
         scale.addScript(this.options.innerAxisSuperscript, -12.5, 3, 35);
@@ -36,7 +71,7 @@ class RadialClock {
       const base = this.options.innerAxisRadius +
         (this.options.hierarchies + 1) * this.options.tierHeight;
       const outerAxis = new RadialAxis(base, base+2);
-      outerAxis.getMonthAxis(true, 10, 7.5, 3);
+      outerAxis.getMonthAxis(this.options.maxjorAxisTicks, true, 10, 7.5, 3);
 
       this.canvas.append(_ => outerAxis.root.node())
     }
@@ -95,64 +130,120 @@ class RadialClock {
     }
 
     if (events.length && this.options.showEvents) {
+      function eventStartAngle(event) {
+        const e = event.milestone;
+        switch (e.type) {
+          case 'range':
+            return Utils.degToRad(Utils.dateToDegreeAngle(new Date(e.from)));
+          case 'deadline':
+            return Utils.degToRad(Utils.dateToDegreeAngle(new Date(e.on)));
+          default:
+            return 0;
+        }
+      }
+
+      function eventEndAngle(event) {
+        const e = event.milestone;
+        switch (e.type) {
+          case 'range':
+            return Utils.degToRad(Utils.dateToDegreeAngle(new Date(e.to)));
+          case 'deadline':
+            return Utils.degToRad(
+              Utils.dateToDegreeAngle(new Date(e.on)) + (360/RadialAxis.ticks
+                .length) / Utils.getMaxDaysInMonth(new Date(e.on))
+            );
+          default:
+            return 0;
+        }
+      }
+
       const eventItem = d3.arc()
         .innerRadius(d =>
           this.options.innerAxisRadius + d.tier * this.options.tierHeight)
         .outerRadius(d =>
           this.options.innerAxisRadius + (d.tier+1) * this.options.tierHeight)
-        .startAngle(d => {
-          const e = d.milestone;
-          switch (e.type) {
-            case 'range':
-              return Utils.degToRad(Utils.dateToDegreeAngle(new Date(e.from)));
-            case 'deadline':
-              return Utils.degToRad(Utils.dateToDegreeAngle(new Date(e.on)));
-            default:
-              return 0;
-          }
-        })
-        .endAngle(d => {
-          const e = d.milestone;
-          switch (e.type) {
-            case 'range':
-              return Utils.degToRad(Utils.dateToDegreeAngle(new Date(e.to)));
-            case 'deadline':
-              return Utils.degToRad(
-                Utils.dateToDegreeAngle(new Date(e.on)) + (360/RadialAxis.ticks
-                  .length) / Utils.getMaxDaysInMonth(new Date(e.on))
-              );
-            default:
-              return 0;
-          }
-        });
-
+        .startAngle(eventStartAngle)
+        .endAngle(eventEndAngle);
 
       const eventsGroup = d3.create('svg:g');
 
       eventsGroup
-        .selectAll('g')
+      .selectAll('g')
         .data(events.map((e, idx) => ({...e, idx})))
         .enter()
-        .append('g')
-        .call(element => {
-          element
-            .each(d => {
-              element
-                .append('svg:g')
-                .selectAll('h')
-                .data(d.milestones.map(milestone => ({...d, milestone})))
-                .enter()
-                .append('path')
-                .attr('d', eventItem)
+        .each(d => {
+          const conferenceGroup = d3.create('svg:g');
+
+          const eventPathTextGroup = conferenceGroup
+            .selectAll('g')
+            .data(d.milestones.map(milestone => ({...d, milestone})))
+            .enter()
+            .append('svg:g');
+
+          const randId = Utils.randotron(8);
+          eventPathTextGroup
+            .append('path')
+            .attr('d', eventItem)
+            .attr('fill', d =>
+              d.milestone.type == 'range' ? `#03a9f4` : `#ff5722`)
+            .attr('fill-opacity', d =>
+              (this.options.hierarchies - (d.tier)+0.5)/this.options.hierarchies
+            )
+            .on('mousemove', this.options.tooltipEnterCallback)
+            .on('mouseleave', this.options.tooltipLeaveCallback);
+
+          if (this.options.showEventLabels) {
+            eventPathTextGroup
+              .append('path')
+              .attr('d', d3.line()([[0,0],[0,-this.options.tierHeight]]))
+              .attr('id', d => `event_${d.milestone.type}_${randId}_${d.idx}`)
+              .attr('stroke', 'none')
+              .style('pointer-events', 'none')
+              .attr('transform', d => {
+                const innerRadius = this.options.innerAxisRadius +
+                  d.tier * this.options.tierHeight;
+                const outerRadius = this.options.innerAxisRadius +
+                  (d.tier+1) * this.options.tierHeight;
+
+                const startAngle = eventStartAngle(d);
+                const endAngle = eventEndAngle(d);
+
+                let theta = startAngle;
+                let x = - innerRadius * Math.cos(theta);
+                let y = innerRadius * Math.sin(theta);
+                let scale = 'scale(1 1)';
+
+                if (theta > Utils.degToRad(180)) {
+                  theta = endAngle;
+                  x = - outerRadius * Math.cos(theta);
+                  y = outerRadius * Math.sin(theta);
+                  scale = 'scale(1 -1)';
+                }
+
+                return `
+                  translate(${y} ${x})
+                  rotate(${Utils.radToDeg(theta)})
+                  ${scale}
+                `
+              });
+
+            eventPathTextGroup
+              .append('text')
+              .attr('x', this.options.tierHeight/2)
+              .attr('dy', -1.5)
+              .append('textPath')
+                .attr('dominant-baseline', "middle")
                 .attr('fill', d =>
                   d.milestone.type == 'range' ? `#03a9f4` : `#ff5722`)
-                .attr('fill-opacity', d =>
-                  1 - d.tier/(1.2*this.options.hierarchies)
-                )
-                .on('mousemove', this.options.tooltipEnterCallback)
-                .on('mouseleave', this.options.tooltipLeaveCallback);
-            });
-        });
+                .attr('text-anchor', "middle")
+                .attr('href', d => `#event_${d.milestone.type}_${randId}_${d.idx}`)
+                .style('font-size', '1.5pt')
+                .text(d => d.title)
+                .style('pointer-events', 'none');
+            }
+
+          eventsGroup.append(_ => conferenceGroup.node());
+        })
 
       this.canvas.append(_ => eventsGroup.node());
     }
@@ -170,18 +261,32 @@ class RadialClock {
       pastGroup.append('path')
         .attr('d', past)
         .attr('fill', 'white')
-        .attr('fill-opacity', 0.5)
+        .attr('fill-opacity', 0.25)
         .style('pointer-events', 'none');
       this.canvas.append(_ => pastGroup.node())
     }
 
-    if (this.options.showClockHand) {
-      const r = this.options.innerAxisRadius +
-        (this.options.hierarchies* this.options.tierHeight) - 2.5;
+    if (this.options.showMajorAxisHand) {
+      const r = (this.options.innerAxisRadius +
+        (this.options.hierarchies* this.options.tierHeight) - 2.5) * (2/3);
       const theta = Utils.dateToDegreeAngle(new Date());
 
       const tickHand = Needle.getNeedle(r, 'rgba(0, 35, 35)');
-      tickHand.attr('transform', `rotate(${theta})`)
+      tickHand
+        .attr('transform', `rotate(${theta})`)
+        .style('pointer-events', 'none');
+      this.canvas.append(_ => tickHand.node());
+    }
+
+    if (this.options.showMinorAxisHand) {
+      const r = this.options.innerAxisRadius +
+        (this.options.hierarchies* this.options.tierHeight) - 2.5;
+      const theta = Utils.dayToDegreeAngle(new Date());
+
+      const tickHand = Needle.getNeedle(r, 'rgba(0, 35, 35)');
+      tickHand
+        .attr('transform', `rotate(${theta})`)
+        .style('pointer-events', 'none');
       this.canvas.append(_ => tickHand.node());
     }
 

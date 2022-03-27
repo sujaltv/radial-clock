@@ -1,17 +1,17 @@
 # Radial Clock
 
 [![](https://img.shields.io/npm/v/radial-clock)](https://www.npmjs.com/package/radial-clock)
-[![](https://img.shields.io/badge/documentation-jsdocs-blue?link=http://radial-clock.surge.sh)](http://radial-clock.surge.sh)
+[![](https://img.shields.io/badge/documentation-jsdocs-blue?link=https://radial-clock.surge.sh)](https://radial-clock.surge.sh)
 
 [![Publish documentation to Surge](https://github.com/sujaltv/radial-clock/actions/workflows/surge_publish.yaml/badge.svg)](https://github.com/sujaltv/radial-clock/actions/workflows/surge3_publish.yaml)
 [![Publish to npmjs.org](https://github.com/sujaltv/radial-clock/actions/workflows/npm_publish.yaml/badge.svg)](https://github.com/sujaltv/radial-clock/actions/workflows/npm_publish.yaml)
 
 <img src='docs/assets/example.png' width=400 />
 
-This is a lightweight JavaScript component integrable with native JavaScript and
-other web frameworks.
+This is a lightweight JavaScript component written with D3.js and is integrable
+with native JavaScript as well as web frameworks.
 
-This plugin is written to keep track of annual events (particularly
+This plugin is written to keep track of annual events (*e.g.*,
 [conferences](https://conferences.surge.sh)).
 
 ## Injection
@@ -32,8 +32,9 @@ const data = [
     "fullForm": "International Conference on Computer Vision",
     "milestones": [
       {
-        "type": "deadline",
-        "on": "27 October 2019"
+        "type": "range",
+        "from": "27 October 2019",
+        "to": "2 November 2019"
       }
     ]
     "url": "https://iccv2019.thecvf.com"
