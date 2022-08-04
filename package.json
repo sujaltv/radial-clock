@@ -1,8 +1,8 @@
 {
   "name": "radial-clock",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A lightweight JavaScript component to create radial clocks.",
-  "homepage": "radial-clock.surge.sh",
+  "homepage": "https://github.com/sujaltv/radial-clock",
   "scripts": {
     "docs": "jsdoc -c jsdoc.json",
     "serve": "webpack serve",
@@ -20,14 +20,14 @@
   ],
   "author": "Sujal",
   "devDependencies": {
-    "@babel/runtime": "^7.17.8",
+    "@babel/runtime": "^7.18.9",
     "better-docs": "^2.7.2",
-    "jsdoc": "^3.6.10",
+    "jsdoc": "^3.6.11",
     "pug": ">=3.0.2",
     "remove-files-webpack-plugin": "^1.5.0",
-    "uglify-js": "^3.15.3",
-    "webpack": "^5.70.0",
-    "webpack-cli": "^4.9.2",
+    "uglify-js": "^3.16.3",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
     "webpack-merge-and-include-globally": "^2.3.4"
   },
   "private": false,

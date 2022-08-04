@@ -1,17 +1,5 @@
-class Browser {
-  static isFirefox() {
-    return navigator.userAgent.includes('Firefox');
-  }
+const CONFERENCES_URL = 'https://raw.githubusercontent.com/paperswithcode/ai-deadlines/gh-pages/_data/conferences.yml';
 
-  static isChrome() {
-    return navigator.userAgent.includes('Chrome');
-  }
-
-  static isSafari() {
-    return navigator.userAgent.includes('Safari') &&
-      !Browser.isChrome() && !Browser.isFirefox();
-  }
-}
 
 function dateToEasyFormat(date) {
   const days = [
@@ -73,14 +61,6 @@ function getTooltipcallback(tooltipElement) {
   return tooltipEnterCallback;
 }
 
-function saveContent(content, fileName) {
-  const downloader = document.createElement('a');
-  downloader.href = content;
-  downloader.download = fileName;
-  downloader.click();
-  downloader.remove();
-}
-
 function getTooltip() {
   const tt = document.createElement('div');
   tt.setAttribute('class', 'tooltip');
@@ -111,7 +91,9 @@ function getTooltip() {
   return tt;
 }
 
-function addClockWindow(data, container) {
+function addClockWindow(data, container, year) {
+  const filtered = filterForYear(data, year);
+
   const divisionContainer = document.createElement('div');
   divisionContainer.setAttribute('class', 'clock-box');
   container.appendChild(divisionContainer);
@@ -127,26 +109,29 @@ function addClockWindow(data, container) {
     .style('width', `100%`)
     .style('height', `100%`)
     .style('font', '10px sans-serif')
-    .attr('viewBox', `-100 -100 200 200`)
+    .attr('viewBox', `-200 -200 400 400`)
     .attr('preserveAspectRatio', 'none');
-
-  const today = new Date();
 
   const clock = new RadialClock({
     ...defaultClockOptions,
+    hierarchies: 5,
+    tierHeight: 25,
+    eventLabelSize: '3.5pt',
     showInnerAxis: true,
     showHierarchyLevels: true,
     showOuterAxis: true,
-    showMajorAxisHand: (Number(data.year) || 2022) == today.getFullYear(),
+    outerAxisTicksX: 20,
+    outerAxisTicksYOffset: 10,
+    showMajorAxisHand: new Date().getFullYear() === year,
     showMinorAxisHand: false,
-    overlayPast: (Number(data.year) || 2022) == today.getFullYear(),
+    overlayPast: new Date().getFullYear() === year,
     demarkMonths: !false,
     showEvents: !false,
-    innerAxisSuperscript: data.category.toUpperCase(),
-    innerAxisSubscript: (data.year || '2022').toUpperCase(),
+    innerAxisSuperscript: 'Vision'.toUpperCase(),
+    innerAxisSubscript: year.toString(),
     tooltipEnterCallback
   });
-  divisionCanvas.append(_ => clock.getClockNode(data.events));
+  divisionCanvas.append(_ => clock.getClockNode(filtered));
   division.appendChild(tooltip);
   division.onmouseleave = _ => {
     tooltip.style.display = 'none';
@@ -163,7 +148,7 @@ function addClockWindow(data, container) {
     svgExport.innerHTML = 'Export <code>(.svg)</code>';
     svgExport.onclick = async () => {
       const svgAsString = await Utils.svgToString(divisionCanvas.node());
-      saveContent(svgAsString, data.category.replace(' ', '_') + '.svg');
+      FileUtils.saveContentAsFile(svgAsString, `Conferences (${year}).svg`);
     }
     buttonsPane.appendChild(svgExport);
   }
@@ -173,7 +158,7 @@ function addClockWindow(data, container) {
     svgExportPNG.innerHTML = 'Export <code>(.png)</code>';
     svgExportPNG.onclick = async () => {
       const svgAsPNG = await Utils.svgToPng(divisionCanvas.node(), 4);
-      saveContent(svgAsPNG, data.category.replace(' ', '_') + '.png');
+      FileUtils.saveContentAsFile(svgAsPNG, `Conferences (${year}).png`);
     }
     buttonsPane.appendChild(svgExportPNG);
   }
@@ -181,12 +166,107 @@ function addClockWindow(data, container) {
   divisionContainer.appendChild(buttonsPane);
 }
 
-function uiScaffold() {
+function dateToReadable(unreadable) {
+  return moment(unreadable).format('dddd, DD MMMM YYYY').toString();
+}
+
+function hindexToTier(hindex) {
+  if (hindex > 200) return 0;
+  if (hindex > 150) return 1;
+  if (hindex > 100) return 2;
+  if (hindex > 50) return 3;
+  return 4;
+}
+
+function filterForYear(data, year) {
+  function filterEvent(e) {
+    switch (e.type) {
+      case 'deadline':
+        return moment(new Date(e.on)).year() === year;
+      case 'range':
+        return moment(new Date(e.from)).year() === year || moment(new Date(e.to)).year() === year;
+    }
+  }
+
+  function clipDeadlinesToYear(e) {
+    if (e.type === 'deadline') return e;
+
+    else if (e.type === 'range') {
+      const oldFrom = moment(new Date(e.from));
+      const oldTo = moment(new Date(e.to));
+
+      if (oldFrom.year() < year) {
+        oldFrom.date(1); oldFrom.month(0);
+        e.from = dateToReadable(oldFrom);
+      }
+
+      if (oldTo.year() > year) {
+        oldTo.date(31); oldTo.month(11);
+        e.to = dateToReadable(oldTo);
+      }
+
+      return e;
+    }
+  }
+
+  const result = JSON.parse(JSON.stringify(data)).filter(conference => {
+    // if there are no milestones, no need to show this
+    if (!conference.milestones || !conference.milestones.length) return false;
+
+    conference.milestones = conference.milestones.filter(filterEvent).map(clipDeadlinesToYear);
+
+    return true;
+  });
+
+  return result;
+}
+
+async function uiScaffold() {
+  const slabsElement = document.getElementById('tier-slabs');
+  katex.render(String.raw`
+    \textrm{tier} = \begin{cases}
+      0 & \textrm{if} \; h > 200 \\
+      1 & \textrm{if} \; 150 < h \le 200 \\
+      2 & \textrm{if} \; 100 < h \le 150 \\
+      3 & \textrm{if} \; 50 < h \le 100 \\
+      4 & \textrm{otherwise}
+    \end{cases}
+  `, slabsElement, { throwOnError: true });
+
+  let result = await REST.get(CONFERENCES_URL).catch(console.error);
+  result = jsyaml.load(result);
+  result = result.map(conference => {
+      const reformed = {
+      title: conference.title,
+      fullName: conference.full_name || conference.id.toUpperCase(),
+      milestones: [],
+      tier: hindexToTier(conference.hindex),
+      hIndex: conference.hindex || 0,
+      location: conference.place,
+      url: conference.link
+    };
+
+    if (conference.deadline != null) {
+      reformed.milestones.push({
+        type: 'deadline',
+        on: dateToReadable(conference.deadline)
+      });
+    }
+    if (conference.start != null && conference.end != null) {
+      reformed.milestones.push({
+        type: 'range',
+        from: dateToReadable(conference.start),
+        to: dateToReadable(conference.end)
+      });
+    }
+
+    return reformed;
+  })
+
   const clocksContainer = document.getElementById('clocks');
 
-  for (let category of conferences) {
-    addClockWindow(category, clocksContainer);
-  }
+  addClockWindow(result, clocksContainer, 2022);
+  addClockWindow(result, clocksContainer, 2023);
 }
 
 document.addEventListener('DOMContentLoaded', uiScaffold);

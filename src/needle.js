@@ -5,7 +5,8 @@
 
 class Needle {
   /**
-   * This method returns a <code>g</code> tag.
+   * This method returns a <code>g</code> HTML element.
+   *
    * @param {int} length The length of the needle.
    * @param {string} colour The colour of the needle (a hex string, the name of
       the colour, or the rgba function called).
