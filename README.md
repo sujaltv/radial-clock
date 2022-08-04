@@ -1,15 +1,14 @@
 # Radial Clock
 
 [![](https://img.shields.io/npm/v/radial-clock)](https://www.npmjs.com/package/radial-clock)
-[![](https://img.shields.io/badge/documentation-jsdocs-blue?link=https://radial-clock.surge.sh)](https://radial-clock.surge.sh)
 
-[![Publish documentation to Surge](https://github.com/sujaltv/radial-clock/actions/workflows/surge_publish.yaml/badge.svg)](https://github.com/sujaltv/radial-clock/actions/workflows/surge3_publish.yaml)
 [![Publish to npmjs.org](https://github.com/sujaltv/radial-clock/actions/workflows/npm_publish.yaml/badge.svg)](https://github.com/sujaltv/radial-clock/actions/workflows/npm_publish.yaml)
 
 <img src='docs/assets/example.png' width=400 />
 
 This is a lightweight JavaScript component written with D3.js and is integrable
-with native JavaScript as well as web frameworks.
+with native JavaScript as well as web frameworks. There is a [list of items yet
+to be done](TODO.md) for when time permits.
 
 This plugin is written to keep track of annual events (*e.g.*,
 [conferences](https://conferences.surge.sh)).
@@ -49,5 +48,3 @@ const canvas = d3.select('svg');
 const clock = new RadialClock(myClockOptions);
 canvas.append(_ => clock.getClockNode(data));
 ```
-
-See [Documentation](https://radial-clock.surge.sh) for API details.

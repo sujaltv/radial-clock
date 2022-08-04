@@ -5,6 +5,12 @@ const defaultClockOptions = {
   innerAxisSubscript: 'TVS',
 
   showOuterAxis: true,
+  outerAxisFontSize: 5,
+  outerAxisHeight: 12,
+  outerAxisTicksX: 10,
+  outerAxisTicksYOffset: 7.5,
+
+  eventLabelSize: '1.5pt',
 
   showMajorAxisHand: true,
   maxjorAxisTicks: [
@@ -69,9 +75,12 @@ class RadialClock {
 
     if (this.options.showOuterAxis) {
       const base = this.options.innerAxisRadius +
-        (this.options.hierarchies + 1) * this.options.tierHeight;
+        (this.options.hierarchies) * this.options.tierHeight +
+          this.options.outerAxisHeight;
       const outerAxis = new RadialAxis(base, base+2);
-      outerAxis.getMonthAxis(this.options.maxjorAxisTicks, true, 10, 7.5, 3);
+      outerAxis.getMonthAxis(this.options.maxjorAxisTicks, true,
+        this.options.outerAxisTicksX, this.options.outerAxisTicksYOffset,
+        this.options.outerAxisFontSize);
 
       this.canvas.append(_ => outerAxis.root.node())
     }
@@ -122,7 +131,8 @@ class RadialClock {
             rotate(${d.idx * 360/12} 0 0)
             translate(0 ${-this.options.innerAxisRadius})
             scale (1, ${this.options.tierHeight *
-              (this.options.hierarchies+(this.options.showOuterAxis ? 1 : 0))})
+              (this.options.hierarchies) +
+              (this.options.showOuterAxis ? this.options.outerAxisHeight : 0)})
           `
         );
 
@@ -236,8 +246,9 @@ class RadialClock {
                 .attr('fill', d =>
                   d.milestone.type == 'range' ? `#03a9f4` : `#ff5722`)
                 .attr('text-anchor', "middle")
-                .attr('href', d => `#event_${d.milestone.type}_${randId}_${d.idx}`)
-                .style('font-size', '1.5pt')
+                .attr('href',
+                  d => `#event_${d.milestone.type}_${randId}_${d.idx}`)
+                .style('font-size', this.options.eventLabelSize)
                 .text(d => d.title)
                 .style('pointer-events', 'none');
             }
