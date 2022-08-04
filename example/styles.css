@@ -17,11 +17,12 @@ html {
   font-size: 10pt;
   padding: 10px;
   line-height: 16pt;
-  margin: 5px;
+  margin: 5px 15px;
 }
 
 .note > ul {
   padding-left: 20px;
+  color: rgb(133, 133, 133);
   margin: 0;
 }
 
@@ -103,15 +104,15 @@ a {
 
 @media screen and (min-width: 640px) {
   .clocks-grid .clock {
-    width: 600px;
-    height: 600px;
+    width: 700px;
+    height: 700px;
   }
 }
 
 @media screen and (max-width: 639px) {
   .clocks-grid .clock {
-    width: 300px;
-    height: 300px;
+    width: 375px;
+    height: 375px;
   }
 }
 
