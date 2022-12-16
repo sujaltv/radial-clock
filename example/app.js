@@ -184,7 +184,8 @@ function filterForYear(data, year) {
       case 'deadline':
         return moment(new Date(e.on)).year() === year;
       case 'range':
-        return moment(new Date(e.from)).year() === year || moment(new Date(e.to)).year() === year;
+        return moment(new Date(e.from))
+          .year() === year || moment(new Date(e.to)).year() === year;
     }
   }
 
@@ -213,7 +214,8 @@ function filterForYear(data, year) {
     // if there are no milestones, no need to show this
     if (!conference.milestones || !conference.milestones.length) return false;
 
-    conference.milestones = conference.milestones.filter(filterEvent).map(clipDeadlinesToYear);
+    conference.milestones = conference.milestones.filter(filterEvent)
+      .map(clipDeadlinesToYear);
 
     return true;
   });
@@ -265,8 +267,9 @@ async function uiScaffold() {
 
   const clocksContainer = document.getElementById('clocks');
 
-  addClockWindow(result, clocksContainer, 2022);
-  addClockWindow(result, clocksContainer, 2023);
+  const thisYear = (new Date()).getFullYear();
+  addClockWindow(result, clocksContainer, thisYear);
+  addClockWindow(result, clocksContainer, thisYear + 1);
 }
 
 document.addEventListener('DOMContentLoaded', uiScaffold);

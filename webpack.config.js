@@ -4,7 +4,7 @@ const UglifyJS = require('uglify-js');
 const MergeIntoSingleFilePlugin = require('webpack-merge-and-include-globally');
 const RemoveFilesPlugin = require('remove-files-webpack-plugin');
 
-// Merge JavaScript into one file. Do the same for stylesheets.
+// Merge JavaScript into one file. #TODO: Do the same for stylesheets.
 const merger = new MergeIntoSingleFilePlugin({
   files: {
     'radial-clock.min.js': ['src/**.js']

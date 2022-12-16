@@ -1,6 +1,6 @@
 {
   "name": "radial-clock",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "A lightweight JavaScript component to create radial clocks.",
   "homepage": "https://github.com/sujaltv/radial-clock",
   "scripts": {
